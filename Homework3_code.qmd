@@ -1,0 +1,52 @@
+---
+title: "Programming with the tidyverse"
+format: pdf
+editor: visual
+---
+
+```{r}
+#| include: false
+library(tidyverse)
+```
+
+## Task 1
+
+### Part a
+
+We have our data in the appropriate folder. So, we will start by looking into using `read_csv()` to load in our data.
+
+```{r}
+#| eval: false
+?read_csv
+```
+
+We are not able to use this function specifically, because this file is delimited by `;` and not a comma. We are able to use the `read_csv2()` function for semicolon delimited data. So, we will use this to read in our data below.
+
+```{r}
+data <- read_csv2("./data/data.txt",
+          col_names = TRUE)
+data
+```
+
+### Part b
+
+Next, we will load in the `6` delimited data with an empty row. This should look the same as the data above when finished loading it in.
+
+```{r}
+
+```
+
+## Task 2
+
+```{r}
+1 + 1
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
