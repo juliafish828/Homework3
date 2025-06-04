@@ -71,17 +71,6 @@ This data set does have 90 rows and 4 columns. We printed out the first 5 as dir
 
 ### Part c
 
-c. Which players scored more, on average, when playing at home versus away? Answer this
-question using a single pipeline where you
-– use pivot_wider to reshape the trailblazer_longer data frame such that you have a 90 x 4
-tibble with columns Player, Game, Home, Away,
-– and then create two new summary statistics (mean_home and mean_away) that represent
-the mean points scored for each player at home and each player away,
-– and then create a third variable that represents the difference in points scored between points
-scored at home and points scored away. Arrange these values in descending order.
-In 1 sentence, state which players scored, on average, more points at home through the first
-10 games of the season than away
-
 We will now investigate which players scored more, on average, when playing at home versus when playing away. We will first use `pivot_wider()` on our new data set to get columns `Player`, `Game`, `Home`, and `Away`.
 
 ```{r}
@@ -123,10 +112,35 @@ This is happening due to the structure of the data. We are asking for the column
 
 ### Part b
 
-We will now try to recreate the second table provided in the file using the `penguins` data set.
+We will now try to recreate the second table provided in the file using the `penguins` data set. From the insight above, we know that we are trying to represent the count of the bird of each species within each island. The `count` function from `dplyr` will help with this.
 
 
 ```{r}
-
+penguins |>
+  group_by(species, island) |>
+  summarise(count = n()) |>
+  pivot_wider(names_from = island,
+              values_from = count,
+              values_fill = 0)
 ```
+
+This output provides the table desired.
+
+
+## Task 4
+
+Now, we know the `NA` values from the `penguins` data set. We will use one pipeline to add those values and print the first 10 observations of the tibble in ascending order to ensure that this worked as desired.
+
+
+```{r}
+penguins |>
+  mutate(bill_length_mm = case_when(
+    is.na(bill_length_mm) & species == "Adelie" ~ 26,
+    is.na(bill_length_mm) & species == "Gentoo" ~ 30,
+    TRUE ~ bill_length_mm))|>
+  arrange(bill_length_mm) |>
+  slice_head(n = 10)
+```
+
+This arrangement and printed output shows that the `NA` values were correctly changed.
 
