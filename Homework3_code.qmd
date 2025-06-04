@@ -30,23 +30,103 @@ data
 
 ### Part b
 
-Next, we will load in the `6` delimited data with an empty row. This should look the same as the data above when finished loading it in.
+Next, we will load in the `6` delimited data with an empty row. This should look the same as the data above when finished loading it in. We will use `read_delim()`.
 
 ```{r}
-
+data1 <- read_delim("./data/data2.txt",
+                    delim = "6",
+                    col_names = TRUE,
+                    col_types = "fdc")
+data1
 ```
 
 ## Task 2
 
-```{r}
-1 + 1
-```
+### Part a
 
-You can add options to executable code like this
+We will first load in the `trailblazer` data and ensure that it has been loaded in properly.
 
 ```{r}
-#| echo: false
-2 * 2
+trailblazer <- read_csv("./data/trailblazer.csv")
+glimpse(trailblazer)
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+This looks to be read in correctly.
+
+### Part b
+
+Now, we will pivot the data to have `Player`, `Game`, `Location`, and `Points`.
+
+```{r}
+library(tidyr)
+trailblazer_longer <- trailblazer |> 
+  pivot_longer(cols = 2:11,
+               names_to = c("Game", "Location"),
+               names_sep = "_",
+               values_to = "Points")
+trailblazer_longer |> head(5)
+```
+
+This data set does have 90 rows and 4 columns. We printed out the first 5 as directed.
+
+### Part c
+
+c. Which players scored more, on average, when playing at home versus away? Answer this
+question using a single pipeline where you
+– use pivot_wider to reshape the trailblazer_longer data frame such that you have a 90 x 4
+tibble with columns Player, Game, Home, Away,
+– and then create two new summary statistics (mean_home and mean_away) that represent
+the mean points scored for each player at home and each player away,
+– and then create a third variable that represents the difference in points scored between points
+scored at home and points scored away. Arrange these values in descending order.
+In 1 sentence, state which players scored, on average, more points at home through the first
+10 games of the season than away
+
+We will now investigate which players scored more, on average, when playing at home versus when playing away. We will first use `pivot_wider()` on our new data set to get columns `Player`, `Game`, `Home`, and `Away`.
+
+```{r}
+trailblazer_longer |> 
+  pivot_wider(names_from = "Location",
+              values_from = "Points"
+              ) |>
+  group_by(Player) |>
+  mutate(mean_home = mean(Home, na.rm = TRUE),
+         mean_away = mean(Away, na.rm = TRUE),
+         diff = mean_home - mean_away) |>
+  arrange(desc(diff))
+```
+
+
+In the first 10 games of the season, Jusuf Nurkic, Robert Covington, Nassir Little, Damian Lillard, and Cody Zeller all scored more points, on average, for home games than away games.
+
+## Task 3
+
+### Part a
+
+We will now load in the penguins data set for use for the next tasks.
+
+```{r}
+library(palmerpenguins)
+```
+
+Next, we will look at the provided code attempting to pivot the data into a wider format.
+
+```{r}
+penguins |>
+select(species, island, bill_length_mm) |>
+pivot_wider(
+names_from = island, values_from = bill_length_mm
+)
+```
+
+This is happening due to the structure of the data. We are asking for the columns to come from the `island` variable, but there are multiple bill lengths for each species within that island. This means that the new entries are going to be lists with all of the specific values within it. For instance, there is a list of 52 doubles for the Adelie species on the Torgersen island (so, all of the 52 values got put into one entry as a list).m There are also null values, which most likely indicated that there were none of that species on that island measured for bill length.
+
+### Part b
+
+We will now try to recreate the second table provided in the file using the `penguins` data set.
+
+
+```{r}
+
+```
+
